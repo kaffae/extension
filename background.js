@@ -1,7 +1,7 @@
 
 
 function checkUrlMatch(url) {
-  const urlSupported = ['https://www.technologyreview.com'];
+  const urlSupported = ['https://www.technologyreview.com', 'https://www.reuters.com'];
   if (!urlSupported.some(supported => url.indexOf(supported) === 0)) return false;
 
   // URL check to make sure it is individual article.
