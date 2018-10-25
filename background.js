@@ -1,6 +1,12 @@
+// previousUrl is used for checking how long the tab has been opened for.
+// Whne the url is opened first, collect the url and timestamp. Then loop through to check it's opened for at least 30 seconds before the next one is opened.
+// Key: url
+// Value: timestamp
+const previousUrl = {};
+
 function checkUrlMatch(url) {
   const urlSupported = ['https://www.technologyreview.com'];
-  // if (!urlSupported.some(supported => url.indexOf(supported) === 0)) return false;
+  if (!urlSupported.some(supported => url.indexOf(supported) === 0)) return false;
 
   // URL check to make sure it is individual article.
   // Check for the last bit of url path. Ex) https://www.technologyreview.com/s/612276/your-genome-on-demand/
@@ -60,20 +66,45 @@ chrome.runtime.onInstalled.addListener(function() {
     if (!tab.url) return;
 
     console.log('tab', tab.url);
+    const url = tab.url;
 
     // Don't do user auth check here. Just drop it if user is not authed in the backend as unidentified user.
-    // TODO: Check 20 seconds to make sure user is reading it actually. Bounce is useless.
     // Also, do the checking for url. It's only MIT for now.
 
-    // if (sending) return;
+    // Check if the same page is reloaded.
+    if (previousUrl[url]) return;
 
-    const url = tab.url;
-    if (checkUrlMatch(url)) {
+    // Reset all previous urls first.
+    Object.keys(previousUrl).forEach(key => {
+      delete previousUrl[key];
+    });
+
+    // Set the timestamp when the new url has come in.
+    previousUrl[url] = new Date();
+
+    // You want to check url after renewing the previous url to make sure different tabs are not opened.
+    if (!checkUrlMatch(url)) {
       return;
     }
 
-    console.log('saving url');
-    return saveUrl(url);
+    // Check for 30 seconds to make sure the user is actually reading it.
+    const it = setInterval(() => {
+      // Cancel when new url comes into play.
+      if (!previousUrl[url]) {
+        console.log('new url came in. canceling interval for', url);
+        clearInterval(it);
+        return;
+      }
+
+      // Check if 30 seconsd has passed.
+      const thirtySeconds = new Date();
+      thirtySeconds.setSeconds(thirtySeconds.getSeconds() - 30);
+
+      if (new Date(previousUrl[url]) > thirtySeconds) return;
+
+      saveUrl(url);
+      clearInterval(it);
+    }, 1000);
 
     // chrome.pageCapture.saveAsMHTML({ tabId, }, function(mhtml) {
     //   const fileReader = new FileReader();
