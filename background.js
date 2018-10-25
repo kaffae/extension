@@ -1,8 +1,4 @@
-// previousUrl is used for checking how long the tab has been opened for.
-// Whne the url is opened first, collect the url and timestamp. Then loop through to check it's opened for at least 30 seconds before the next one is opened.
-// Key: url
-// Value: timestamp
-const previousUrl = {};
+
 
 function checkUrlMatch(url) {
   const urlSupported = ['https://www.technologyreview.com'];
@@ -52,46 +48,38 @@ function saveUrl(url) {
   });
 }
 
+// tabUrl holds tab id and url it represents.
+// When the tab is first activated, it has no url.
+// This holds tab id and url match. collect the url and timestamp. Then loop through to check it's opened for at least 30 seconds before the next one is opened.
+const tabUrl = {};
+
+// activeTab holds the id of the currently active tab with the time it has beocme active.
+// Key: tabId
+// Value: timestamp
+let activeTab = {};
+
 chrome.runtime.onInstalled.addListener(function() {
   console.log('installed');
-  // chrome.storage.sync.set({color: '#3aa757'}, function() {
-  //   console.log("The color is green.");
-  // });
 
-  // I think signup check should be here.
-
-  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (!tabId || changeInfo.status !== 'complete') return;
-    if (tab.audible) return;
-    if (!tab.url) return;
-
-    console.log('tab', tab.url);
-    const url = tab.url;
-
-    // Don't do user auth check here. Just drop it if user is not authed in the backend as unidentified user.
-    // Also, do the checking for url. It's only MIT for now.
-
-    // Check if the same page is reloaded.
-    if (previousUrl[url]) return;
+  // onActivated is called every time user moves around the tab they are on.
+  chrome.tabs.onActivated.addListener((activeInfo) =>  {
+    console.log('activeInfo.tabId', activeInfo.tabId);
+    const tabId = activeInfo.tabId;
 
     // Reset all previous urls first.
-    Object.keys(previousUrl).forEach(key => {
-      delete previousUrl[key];
+    Object.keys(activeTab).forEach(key => {
+      delete activeTab[key];
     });
 
-    // Set the timestamp when the new url has come in.
-    previousUrl[url] = new Date();
+    // Set the timestamp when the new tab has become active.
+    activeTab[tabId] = new Date();
 
-    // You want to check url after renewing the previous url to make sure different tabs are not opened.
-    if (!checkUrlMatch(url)) {
-      return;
-    }
+    // The check should be here. Use addListener for getting the url onnly.
 
     // Check for 30 seconds to make sure the user is actually reading it.
     const it = setInterval(() => {
       // Cancel when new url comes into play.
-      if (!previousUrl[url]) {
-        console.log('new url came in. canceling interval for', url);
+      if (!activeTab[tabId]) {
         clearInterval(it);
         return;
       }
@@ -99,19 +87,45 @@ chrome.runtime.onInstalled.addListener(function() {
       // Check if 30 seconsd has passed.
       const thirtySeconds = new Date();
       thirtySeconds.setSeconds(thirtySeconds.getSeconds() - 30);
+      if (activeTab[tabId] > thirtySeconds) return;
 
-      if (new Date(previousUrl[url]) > thirtySeconds) return;
+      // Check if url has not been fetched. It's been 30 seconds. If not, give up.
+      if (!tabUrl[tabId]) {
+        clearInterval(it);
+        return
+      }
 
-      saveUrl(url);
+      // Check the matching url only at this last step since url might not be available when the tab becomes first active.
+      if (!checkUrlMatch(tabUrl[tabId])) {
+        clearInterval(it);
+        return;
+      }
+
+      // Also, do the checking for url. It's only MIT for now.
       clearInterval(it);
+      saveUrl(tabUrl[tabId]);
     }, 1000);
+  });
+
+  chrome.tabs.onRemoved.addListener(tabId => {
+    delete tabUrl[tabId];
+  });
+
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (!tabId || changeInfo.status !== 'complete') return;
+    if (tab.audible) return;
+    if (!tab.url) return;
+
+    const url = tab.url;
+
+    // Store it so that activeTab listener can use this.
+    tabUrl[tabId] = url;
 
     // chrome.pageCapture.saveAsMHTML({ tabId, }, function(mhtml) {
     //   const fileReader = new FileReader();
     //   fileReader.readAsText(mhtml);
 
     //   fileReader.onload = function(e) {
-    //     // console.log('e', e);
     //     const mthmlStr = e.target.result;
     //     // console.log('mthmlStr', mthmlStr);
     //   };
