@@ -9,10 +9,10 @@ function checkUrlMatch(url) {
   // Conditions:
   // 1. Hyphen separated words consist of more than 3 words.
 
-  const urlOnly = url.includes('?') ? url.slice(url.indexOf('?')) : url;
+  const urlOnly = url.includes('?') ? url.slice(0, url.indexOf('?')) : url;
   const paths = urlOnly.split('/');
   const lastPath = paths[paths.length - 1].length === 0 ? paths[paths.length - 2] : paths[paths.length - 1];
-
+  // https://www.technologyreview.com/s/612021/advanced-tech-but-growth-slow-and-unequal-paradoxes-and-policies/?set=535821
   if (lastPath.split('-').length < 3) {
     return false;
   }
@@ -85,9 +85,10 @@ chrome.runtime.onInstalled.addListener(function() {
       }
 
       // Check if 30 seconsd has passed.
-      const thirtySeconds = new Date();
-      thirtySeconds.setSeconds(thirtySeconds.getSeconds() - 30);
-      if (activeTab[tabId] > thirtySeconds) return;
+      const twentySeconds = new Date();
+      // twentySeconds.setSeconds(twentySeconds.getSeconds() - 20);
+      twentySeconds.setSeconds(twentySeconds.getSeconds() - 5);
+      if (activeTab[tabId] > twentySeconds) return;
 
       // Check if url has not been fetched. It's been 30 seconds. If not, give up.
       if (!tabUrl[tabId]) {
@@ -100,6 +101,7 @@ chrome.runtime.onInstalled.addListener(function() {
         clearInterval(it);
         return;
       }
+      console.log('saving url');
 
       // Also, do the checking for url. It's only MIT for now.
       clearInterval(it);
