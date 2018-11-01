@@ -2,21 +2,16 @@
     "name": "Teazuk",
     "version": "0.1",
     "description": "Let's understand what you read!",
-    "permissions": ["https://*/*", "http://*/*", "*://*/*", "pageCapture"],
+    "permissions": ["https://*/*", "http://*/*", "*://*/*"],
     "background": {
       "scripts": ["background.js"],
       "persistent": false
     },
-    // "content_scripts": [{
-     // "matches": ["https://developer.chrome.com/*"],
-     // "matches": ["https://stackoverflow.com/*"],
-     // "js": ["./content.js"],
-     // Injected in order.
-     // "js": ["content.js", "./static/js/main.c5f97b34.js"],
-     // "js": ["./static/js/main.daac7756.js", "content.js"],
-     // "css": ["./static/css/main.6e51c0d2.css"],
-     // "run_at": "document_idle"
-    // }],
+    "content_scripts": [{
+     "matches": ["https://www.technologyreview.com/*", "https://www.reuters.com/*", "https://www.economist.com/*"],
+     "js": ["./content.js"],
+     "run_at": "document_idle"
+    }],
     // "options_page": "options.html",
     "browser_action": {
       "default_title": "Teazuk",
