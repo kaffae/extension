@@ -24,7 +24,8 @@
       // }
     },
     "web_accessible_resources": [
-       // "build/index.js"
+       "oauth_success.js",
+       "oauth_success.html"
     ],
     "icons": {
       // "16": "images/get_started16.png",

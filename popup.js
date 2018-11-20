@@ -131,3 +131,25 @@ function codeSubmit() {
     document.getElementById('code-form').style = 'display:none;';
   });
 }
+
+function successfulLogin() {
+  isLoggedIn()
+  .then(loggedIn => {
+    if (loggedIn) {
+      document.getElementById('logged-in').style = 'display:block;';
+      document.getElementById('email-form').style = 'display:none;';
+    } else {
+      document.getElementById('logged-in').style = 'display:none;';
+      document.getElementById('email-form').style = 'display:block;';
+    }
+  });
+}
+
+const fbLoginBtn = document.getElementById('facebook-login');
+fbLoginBtn.onclick = () => {
+  // Open new window for oauth.
+  const successUrl = chrome.runtime.getURL('oauth_success.html');
+  const loginWindow = window.open(`https://app.teazuk.com/auth/facebook?redirect=${successUrl}`, "facebook-login","status=1,width=600,height=700,top=100,left="+(screen.width/2-300));
+  // Attach callback to refresh the site with user state.
+  loginWindow.successfulLogin = successfulLogin;
+}
