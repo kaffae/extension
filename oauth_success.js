@@ -4,7 +4,11 @@ if (opener) {
     opener.successfulLogin();
   }
 
-  window.close();
+  setTimeout(() => {
+    window.close();
+  }, 2000);
+
+
 } else {
   document.body.innerHTML = 'Successful Login. Close the window now.';
 }

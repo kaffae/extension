@@ -30,119 +30,128 @@ function isLoggedIn() {
   });
 }
 
-// const emailSubmitBtn = document.getElementById('email-button');
-// emailSubmitBtn.addEventListener('click', emailSubmit);
-const emailForm = document.getElementById('email-form');
-emailForm.addEventListener('submit', e => {
-  e.preventDefault();
-  emailSubmit();
-});
+// // const emailSubmitBtn = document.getElementById('email-button');
+// // emailSubmitBtn.addEventListener('click', emailSubmit);
+// const emailForm = document.getElementById('email-form');
+// emailForm.addEventListener('submit', e => {
+//   e.preventDefault();
+//   emailSubmit();
+// });
 
-const codeForm = document.getElementById('code-form');
-codeForm.addEventListener('submit', e => {
-  e.preventDefault();
-  codeSubmit();
-});
+// const codeForm = document.getElementById('code-form');
+// codeForm.addEventListener('submit', e => {
+//   e.preventDefault();
+//   codeSubmit();
+// });
 
-isLoggedIn()
-.then(loggedIn => {
-  if (loggedIn) {
-    document.getElementById('logged-in').style = 'display:block;';
-    document.getElementById('email-form').style = 'display:none;';
-  } else {
-    document.getElementById('logged-in').style = 'display:none;';
-    document.getElementById('email-form').style = 'display:block;';
-  }
-});
+// isLoggedIn()
+// .then(loggedIn => {
+//   if (loggedIn) {
+//     document.getElementById('logged-in').style = 'display:block;';
+//     document.getElementById('email-form').style = 'display:none;';
+//   } else {
+//     document.getElementById('logged-in').style = 'display:none;';
+//     document.getElementById('email-form').style = 'display:block;';
+//   }
+// });
 
-let sending = false;
-function emailSubmit() {
-  const text = document.getElementById('email').value;
-  if (text.length < 6) {
-    return;
-  }
-  if (sending) {
-    return;
-  }
+// let sending = false;
+// function emailSubmit() {
+//   const text = document.getElementById('email').value;
+//   if (text.length < 6) {
+//     return;
+//   }
+//   if (sending) {
+//     return;
+//   }
 
-  const data = {
-    email: text,
-  };
-  sending = true;
-  // Send it to the server.
-  fetch(`https://app.teazuk.com/signin/email?token=${token}`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-    method: 'PUT',
-    body: JSON.stringify(data),
-  })
-  .then(resp => resp.json())
-  .then(resp => {
-    sending = false;
+//   const data = {
+//     email: text,
+//   };
+//   sending = true;
+//   // Send it to the server.
+//   fetch(`https://app.teazuk.com/signin/email?token=${token}`, {
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     credentials: 'include',
+//     method: 'PUT',
+//     body: JSON.stringify(data),
+//   })
+//   .then(resp => resp.json())
+//   .then(resp => {
+//     sending = false;
+//   })
+//   .catch(err => {
+//     // Proceed to the next regardless.
+//     sending = false;
+//   });
+
+//   // Show the code input.
+//   document.getElementById('email-form').style = 'display:none;';
+//   document.getElementById('code-form').style = 'display:block;';
+// }
+
+// function codeSubmit() {
+//   const code = document.getElementById('code').value;
+//   if (code.length !== 6) {
+//     return;
+//   }
+//   if (sending) {
+//     return;
+//   }
+
+//   sending = true;
+
+//   const data = {
+//     code,
+//   };
+
+//   // Send it to the server.
+//   fetch(`https://app.teazuk.com/signin/code?token=${token}`, {
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     credentials: 'include',
+//     method: 'PUT',
+//     body: JSON.stringify(data),
+//   })
+//   .then(resp => resp.json())
+//   .then(resp => {
+//     sending = false;
+
+//     document.getElementById('logged-in').style = 'display:block;';
+//     document.getElementById('code-form').style = 'display:none;';
+//   })
+//   .catch(err => {
+//     sending = false;
+//     alert(`${err}`);
+//     // Show error page.
+//     document.getElementById('email-form').style = 'display:block;';
+//     document.getElementById('code-form').style = 'display:none;';
+//   });
+// }
+updatePageByUserStatus();
+function updatePageByUserStatus() {
+  isLoggedIn()
+  .then(loggedIn => {
+    if (loggedIn) {
+      document.getElementById('loggedin').style = 'display:block;';
+      document.getElementById('not-loggedin').style = 'display:none;';
+    } else {
+      document.getElementById('loggedin').style = 'display:none;';
+      document.getElementById('not-loggedin').style = 'display:block;';
+    }
   })
   .catch(err => {
-    // Proceed to the next regardless.
-    sending = false;
-  });
-
-  // Show the code input.
-  document.getElementById('email-form').style = 'display:none;';
-  document.getElementById('code-form').style = 'display:block;';
-}
-
-function codeSubmit() {
-  const code = document.getElementById('code').value;
-  if (code.length !== 6) {
-    return;
-  }
-  if (sending) {
-    return;
-  }
-
-  sending = true;
-
-  const data = {
-    code,
-  };
-
-  // Send it to the server.
-  fetch(`https://app.teazuk.com/signin/code?token=${token}`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-    method: 'PUT',
-    body: JSON.stringify(data),
-  })
-  .then(resp => resp.json())
-  .then(resp => {
-    sending = false;
-
-    document.getElementById('logged-in').style = 'display:block;';
-    document.getElementById('code-form').style = 'display:none;';
-  })
-  .catch(err => {
-    sending = false;
-    alert(`${err}`);
-    // Show error page.
-    document.getElementById('email-form').style = 'display:block;';
-    document.getElementById('code-form').style = 'display:none;';
+    console.log('err in updatePageByUserStatus', err);
+    document.getElementById('loggedin').style = 'display:none;';
+    document.getElementById('not-loggedin').style = 'display:block;';
   });
 }
 
 function successfulLogin() {
-  isLoggedIn()
-  .then(loggedIn => {
-    if (loggedIn) {
-      document.getElementById('logged-in').style = 'display:block;';
-      document.getElementById('email-form').style = 'display:none;';
-    } else {
-      document.getElementById('logged-in').style = 'display:none;';
-      document.getElementById('email-form').style = 'display:block;';
-    }
-  });
+  updatePageByUserStatus();
 }
 
 const fbLoginBtn = document.getElementById('facebook-login');
