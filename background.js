@@ -1,7 +1,7 @@
 
 
 function checkUrlMatch(url) {
-  const urlSupported = ['https://www.technologyreview.com', 'https://www.reuters.com', 'https://www.economist.com'];
+  const urlSupported = ['https://www.technologyreview.com', 'https://www.reuters.com', 'https://www.economist.com', 'https://www.nytimes.com', 'https://www.washingtontimes.com', 'https://www.theguardian.com', 'https://www.businessinsider.com', 'https://www.forbes.com', 'https://www.wired.com', 'https://mashable.com', 'https://www.dailymail.co.uk'];
   if (!urlSupported.some(supported => url.indexOf(supported) === 0)) return false;
 
   // URL check to make sure it is individual article.
@@ -98,6 +98,7 @@ chrome.runtime.onInstalled.addListener(function() {
 
       // Check the matching url only at this last step since url might not be available when the tab becomes first active.
       if (!checkUrlMatch(tabUrl[tabId])) {
+        console.log('url unmatched');
         clearInterval(it);
         return;
       }
