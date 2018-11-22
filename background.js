@@ -86,8 +86,7 @@ chrome.runtime.onInstalled.addListener(function() {
 
       // Check if 30 seconsd has passed.
       const twentySeconds = new Date();
-      // twentySeconds.setSeconds(twentySeconds.getSeconds() - 20);
-      twentySeconds.setSeconds(twentySeconds.getSeconds() - 5);
+      twentySeconds.setSeconds(twentySeconds.getSeconds() - 20);
       if (activeTab[tabId] > twentySeconds) return;
 
       // Check if url has not been fetched. It's been 30 seconds. If not, give up.
@@ -98,7 +97,6 @@ chrome.runtime.onInstalled.addListener(function() {
 
       // Check the matching url only at this last step since url might not be available when the tab becomes first active.
       if (!checkUrlMatch(tabUrl[tabId])) {
-        console.log('url unmatched');
         clearInterval(it);
         return;
       }
