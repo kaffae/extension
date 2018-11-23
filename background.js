@@ -76,6 +76,7 @@ function saveUrl(url) {
 // tabUrl holds tab id and url it represents.
 // When the tab is first activated, it has no url.
 // This holds tab id and url match. collect the url and timestamp. Then loop through to check it's opened for at least 30 seconds before the next one is opened.
+// One url is saved, remove it. Duplicate article is useless in analytics.
 const tabUrl = {};
 
 // activeTab holds the id of the currently active tab with the time it has beocme active.
@@ -100,7 +101,8 @@ function processActiveTab() {
 
     // Check if enough time has passed since the active tab has been set.
     const twentySeconds = new Date();
-    twentySeconds.setSeconds(twentySeconds.getSeconds() - 20);
+    // twentySeconds.setSeconds(twentySeconds.getSeconds() - 20);
+    twentySeconds.setSeconds(twentySeconds.getSeconds() - 5);
     if (activeTab[tabId] > twentySeconds) {
       processActiveTab();
       return;
@@ -119,9 +121,14 @@ function processActiveTab() {
     }
     console.log('saving url');
 
+    saveUrl(tabUrl[tabId]);
+
+    // Delete active tab to stop it from keep saving.
     delete activeTab[tabId];
 
-    saveUrl(tabUrl[tabId]);
+    // Delete tab url as well to stop saving the same url again when user comes back and forth different tabs (activeTab gets activated regardless).
+    delete tabUrl[tabId];
+
     processActiveTab();
   }, 5000);
 }
