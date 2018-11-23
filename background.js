@@ -83,55 +83,72 @@ const tabUrl = {};
 // Value: timestamp
 let activeTab = {};
 
+function processActiveTab() {
+
+  // TEST
+  console.log('tabUrl', tabUrl);
+  console.log('activeTab', activeTab);
+
+  // Check for time passed to make sure the user is actually reading it.
+  setTimeout(() => {
+    // Cancel when new url comes into play.
+    const tabId = Object.keys(activeTab)[0];
+    if (!tabId) {
+      processActiveTab();
+      return;
+    }
+
+    // Check if enough time has passed since the active tab has been set.
+    const twentySeconds = new Date();
+    twentySeconds.setSeconds(twentySeconds.getSeconds() - 20);
+    if (activeTab[tabId] > twentySeconds) {
+      processActiveTab();
+      return;
+    }
+
+    // Check if url has not been fetched. It's been 30 seconds. If not, give up.
+    if (!tabUrl[tabId]) {
+      processActiveTab();
+      return
+    }
+
+    // Check the matching url only at this last step since url might not be available when the tab becomes first active.
+    if (!checkUrlMatch(tabUrl[tabId])) {
+      processActiveTab();
+      return;
+    }
+    console.log('saving url');
+
+    delete activeTab[tabId];
+
+    saveUrl(tabUrl[tabId]);
+    processActiveTab();
+  }, 5000);
+}
+
+function renewActiveTab(tabId) {
+  if (!tabId) return;
+
+  // Reset all previous urls first.
+  Object.keys(activeTab).forEach(key => {
+    delete activeTab[key];
+  });
+
+  activeTab[tabId] = new Date();
+}
+
 chrome.runtime.onInstalled.addListener(function() {
   console.log('installed');
+  processActiveTab();
 
   // onActivated is called every time user moves around the tab they are on.
   chrome.tabs.onActivated.addListener((activeInfo) =>  {
     // console.log('activeInfo.tabId', activeInfo.tabId);
     const tabId = activeInfo.tabId;
 
-    // Reset all previous urls first.
-    Object.keys(activeTab).forEach(key => {
-      delete activeTab[key];
-    });
-
     // Set the timestamp when the new tab has become active.
-    activeTab[tabId] = new Date();
-
-    // The check should be here. Use addListener for getting the url onnly.
-
-    // Check for 30 seconds to make sure the user is actually reading it.
-    const it = setInterval(() => {
-      // Cancel when new url comes into play.
-      if (!activeTab[tabId]) {
-        clearInterval(it);
-        return;
-      }
-
-      // Check if 30 seconsd has passed.
-      const twentySeconds = new Date();
-      // twentySeconds.setSeconds(twentySeconds.getSeconds() - 20);
-      twentySeconds.setSeconds(twentySeconds.getSeconds() - 5);
-      if (activeTab[tabId] > twentySeconds) return;
-
-      // Check if url has not been fetched. It's been 30 seconds. If not, give up.
-      if (!tabUrl[tabId]) {
-        clearInterval(it);
-        return
-      }
-
-      // Check the matching url only at this last step since url might not be available when the tab becomes first active.
-      if (!checkUrlMatch(tabUrl[tabId])) {
-        clearInterval(it);
-        return;
-      }
-      console.log('saving url');
-
-      // Also, do the checking for url. It's only MIT for now.
-      clearInterval(it);
-      saveUrl(tabUrl[tabId]);
-    }, 1000);
+    // Let process take care of the time management
+    renewActiveTab(tabId);
   });
 
   chrome.tabs.onRemoved.addListener(tabId => {
@@ -139,6 +156,7 @@ chrome.runtime.onInstalled.addListener(function() {
   });
 
   chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    console.log('tabs updated');
     if (!tabId || changeInfo.status !== 'complete') return;
     if (tab.audible) return;
     if (!tab.url) return;
@@ -147,6 +165,12 @@ chrome.runtime.onInstalled.addListener(function() {
 
     // Store it so that activeTab listener can use this.
     tabUrl[tabId] = url;
+
+    // Renew active tab if the url change happened on the same tab.
+    const activeTabId = Object.keys(activeTab)[0];
+    if (activeTabId && activeTabId === tabId) {
+      renewActiveTab(tabId);
+    }
 
     // chrome.pageCapture.saveAsMHTML({ tabId, }, function(mhtml) {
     //   const fileReader = new FileReader();
