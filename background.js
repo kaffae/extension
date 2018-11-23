@@ -101,8 +101,7 @@ function processActiveTab() {
 
     // Check if enough time has passed since the active tab has been set.
     const twentySeconds = new Date();
-    // twentySeconds.setSeconds(twentySeconds.getSeconds() - 20);
-    twentySeconds.setSeconds(twentySeconds.getSeconds() - 5);
+    twentySeconds.setSeconds(twentySeconds.getSeconds() - 20);
     if (activeTab[tabId] > twentySeconds) {
       processActiveTab();
       return;
