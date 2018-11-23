@@ -1,31 +1,56 @@
 
 
 function checkUrlMatch(url) {
-  const urlSupported = ['https://www.technologyreview.com', 'https://www.reuters.com', 'https://www.economist.com', 'https://www.nytimes.com', 'https://www.washingtontimes.com', 'https://www.theguardian.com', 'https://www.businessinsider.com', 'https://www.forbes.com', 'https://www.wired.com', 'https://mashable.com', 'https://www.dailymail.co.uk'];
-  if (!urlSupported.some(supported => url.indexOf(supported) === 0)) return false;
+  // COMMENT: Open all domains.
+  // const urlSupported = ['https://www.technologyreview.com', 'https://www.reuters.com', 'https://www.economist.com', 'https://www.nytimes.com', 'https://www.washingtontimes.com', 'https://www.theguardian.com', 'https://www.businessinsider.com', 'https://www.forbes.com', 'https://www.wired.com', 'https://mashable.com', 'https://www.dailymail.co.uk'];
+  // if (!urlSupported.some(supported => url.indexOf(supported) === 0)) return false;
 
   // URL check to make sure it is individual article.
   // Check for the last bit of url path. Ex) https://www.technologyreview.com/s/612276/your-genome-on-demand/
   // Conditions:
   // 1. Hyphen separated words consist of more than 3 words.
+  // 2. Only for Wikipedia, allow any kind of article page since many articles can be a single title.
 
+  console.log('checking url', url);
   const urlOnly = url.includes('?') ? url.slice(0, url.indexOf('?')) : url;
   const paths = urlOnly.split('/');
+  // Check if it's domain only site.
+  if (paths.length === 1) {
+    console.log('one path');
+    return false;
+  }
+
   const lastPath = paths[paths.length - 1].length === 0 ? paths[paths.length - 2] : paths[paths.length - 1];
-  // https://www.technologyreview.com/s/612021/advanced-tech-but-growth-slow-and-unequal-paradoxes-and-policies/?set=535821
+
+  // Only skip wikipedia specific catalogue page like Category or Portal.
+  if (url.indexOf('https://en.wikipedia.org/wiki') === 0) {
+    console.log('Wikiedpai');
+    if (lastPath.match(/:/)) {
+      console.log('colon');
+      return false;
+    }
+    return true;
+  }
+
+  // Ex) https://www.technologyreview.com/s/612021/advanced-tech-but-growth-slow-and-unequal-paradoxes-and-policies/?set=535821
   if (lastPath.split('-').length < 3) {
+    console.log('length too short ');
     return false;
   }
 
   return true;
 }
 
+let sending = false;
 function saveUrl(url) {
   const data = {
     url,
   };
 
-  // let sending = true;
+  if (sending) return;
+
+  sending = true;
+
   const token = '94eca02d-287b-40ab-82e0-04774beaf80e';
   return fetch(`https://app.teazuk.com/analytics/article?token=${token}`, {
     headers: {
@@ -38,12 +63,12 @@ function saveUrl(url) {
   .then(resp => resp.json())
   .then(resp => {
     console.log('resp', resp);
-    // sending = false;
+    sending = false;
     return {};
   })
   .catch(err => {
     // Proceed to the next regardless.
-    // sending = false;
+    sending = false;
     console.log('err', err);
   });
 }
@@ -63,7 +88,7 @@ chrome.runtime.onInstalled.addListener(function() {
 
   // onActivated is called every time user moves around the tab they are on.
   chrome.tabs.onActivated.addListener((activeInfo) =>  {
-    console.log('activeInfo.tabId', activeInfo.tabId);
+    // console.log('activeInfo.tabId', activeInfo.tabId);
     const tabId = activeInfo.tabId;
 
     // Reset all previous urls first.
@@ -86,7 +111,8 @@ chrome.runtime.onInstalled.addListener(function() {
 
       // Check if 30 seconsd has passed.
       const twentySeconds = new Date();
-      twentySeconds.setSeconds(twentySeconds.getSeconds() - 20);
+      // twentySeconds.setSeconds(twentySeconds.getSeconds() - 20);
+      twentySeconds.setSeconds(twentySeconds.getSeconds() - 5);
       if (activeTab[tabId] > twentySeconds) return;
 
       // Check if url has not been fetched. It's been 30 seconds. If not, give up.
