@@ -11,12 +11,12 @@ function checkUrlMatch(url) {
   // 1. Hyphen separated words consist of more than 3 words.
   // 2. Only for Wikipedia, allow any kind of article page since many articles can be a single title.
 
-  console.log('checking url', url);
+  // console.log('checking url', url);
   const urlOnly = url.includes('?') ? url.slice(0, url.indexOf('?')) : url;
   const paths = urlOnly.split('/');
   // Check if it's domain only site.
   if (paths.length === 1) {
-    console.log('one path');
+    // console.log('one path');
     return false;
   }
 
@@ -24,9 +24,9 @@ function checkUrlMatch(url) {
 
   // Only skip wikipedia specific catalogue page like Category or Portal.
   if (url.indexOf('https://en.wikipedia.org/wiki') === 0) {
-    console.log('Wikiedpai');
+    // console.log('Wikiedpai');
     if (lastPath.match(/:/)) {
-      console.log('colon');
+      // console.log('colon');
       return false;
     }
     return true;
@@ -34,7 +34,7 @@ function checkUrlMatch(url) {
 
   // Ex) https://www.technologyreview.com/s/612021/advanced-tech-but-growth-slow-and-unequal-paradoxes-and-policies/?set=535821
   if (lastPath.split('-').length < 3) {
-    console.log('length too short ');
+    // console.log('length too short ');
     return false;
   }
 
@@ -62,14 +62,14 @@ function saveUrl(url) {
   })
   .then(resp => resp.json())
   .then(resp => {
-    console.log('resp', resp);
+    // console.log('resp', resp);
     sending = false;
     return {};
   })
   .catch(err => {
     // Proceed to the next regardless.
     sending = false;
-    console.log('err', err);
+    // console.log('err', err);
   });
 }
 
@@ -87,8 +87,8 @@ let activeTab = {};
 function processActiveTab() {
 
   // TEST
-  console.log('tabUrl', tabUrl);
-  console.log('activeTab', activeTab);
+  // console.log('tabUrl', tabUrl);
+  // console.log('activeTab', activeTab);
 
   // Check for time passed to make sure the user is actually reading it.
   setTimeout(() => {
@@ -118,7 +118,7 @@ function processActiveTab() {
       processActiveTab();
       return;
     }
-    console.log('saving url');
+    // console.log('saving url');
 
     saveUrl(tabUrl[tabId]);
 
@@ -144,12 +144,11 @@ function renewActiveTab(tabId) {
 }
 
 chrome.runtime.onInstalled.addListener(function() {
-  console.log('installed');
+  // console.log('installed');
   processActiveTab();
 
   // onActivated is called every time user moves around the tab they are on.
   chrome.tabs.onActivated.addListener((activeInfo) =>  {
-    // console.log('activeInfo.tabId', activeInfo.tabId);
     const tabId = activeInfo.tabId;
 
     // Set the timestamp when the new tab has become active.
@@ -162,7 +161,7 @@ chrome.runtime.onInstalled.addListener(function() {
   });
 
   chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    console.log('tabs updated');
+    // console.log('tabs updated');
     if (!tabId || changeInfo.status !== 'complete') return;
     if (tab.audible) return;
     if (!tab.url) return;
@@ -184,7 +183,7 @@ chrome.runtime.onInstalled.addListener(function() {
 
     //   fileReader.onload = function(e) {
     //     const mthmlStr = e.target.result;
-    //     // console.log('mthmlStr', mthmlStr);
+        // console.log('mthmlStr', mthmlStr);
     //   };
     // });
   });
