@@ -1,6 +1,6 @@
   {
     "name": "Teazuk",
-    "version": "0.1",
+    "version": "0.1.1",
     "description": "Let's understand what you read!",
     "permissions": ["https://*/*", "http://*/*", "*://*/*"],
     "background": {
