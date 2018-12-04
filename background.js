@@ -11,12 +11,12 @@ function checkUrlMatch(url) {
   // 1. Hyphen separated words consist of more than 3 words.
   // 2. Only for Wikipedia, allow any kind of article page since many articles can be a single title.
 
-  console.log('checking url', url);
+  // console.log('checking url', url);
   const urlOnly = url.includes('?') ? url.slice(0, url.indexOf('?')) : url;
   const paths = urlOnly.split('/');
   // Check if it's domain only site.
   if (paths.length === 1) {
-    console.log('one path');
+    // console.log('one path');
     return false;
   }
 
@@ -24,9 +24,8 @@ function checkUrlMatch(url) {
 
   // Only skip wikipedia specific catalogue page like Category or Portal.
   if (url.indexOf('https://en.wikipedia.org/wiki') === 0) {
-    console.log('Wikiedpai');
+    // console.log('Wikiedpai');
     if (lastPath.match(/:/)) {
-      console.log('colon');
       return false;
     }
     return true;
@@ -34,7 +33,7 @@ function checkUrlMatch(url) {
 
   // Ex) https://www.technologyreview.com/s/612021/advanced-tech-but-growth-slow-and-unequal-paradoxes-and-policies/?set=535821
   if (lastPath.split('-').length < 3) {
-    console.log('length too short ');
+    // console.log('length too short ');
     return false;
   }
 
@@ -62,7 +61,7 @@ function saveUrl(url) {
   })
   .then(resp => resp.json())
   .then(resp => {
-    console.log('resp', resp);
+    // console.log('resp', resp);
     sending = false;
     return {};
   })

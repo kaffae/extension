@@ -37,20 +37,18 @@ function saveUrl(url) {
   })
   .then(resp => resp.json())
   .then(resp => {
-    console.log('resp', resp);
+    // console.log('resp', resp);
     // sending = false;
     return {};
   })
   .catch(err => {
     // Proceed to the next regardless.
     // sending = false;
-    console.log('err', err);
+    // console.log('err', err);
   });
 }
 
 function handleUrl(url) {
-
-  console.log('url supported');
 
   // Check if 30 seconsd has passed.
   const twentySeconds = new Date();
@@ -59,8 +57,6 @@ function handleUrl(url) {
     setTimeout(() => {handleUrl(url)}, 4000);
     return;
   }
-
-  console.log('saving url');
 
   // Also, do the checking for url. It's only MIT for now.
   saveUrl(url);
@@ -77,10 +73,10 @@ function reload() {
 
   const url = window.location.href;
 
-  console.log('checking url');
+  // console.log('checking url');
   // Check the matching url only at this last step since url might not be available when the tab becomes first active.
   if (!isUrlSupported(url)) {
-    console.log('url unsupproted');
+    // console.log('url unsupproted');
     return;
   }
 
@@ -94,7 +90,7 @@ function reload() {
 
 
 window.onhashchange = () => {
-  console.log('onhashchange', location.href);
+  // console.log('onhashchange', location.href);
 }
 
 reload();
