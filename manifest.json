@@ -2,9 +2,7 @@
     "name": "Teazuk",
     "version": "0.1.2",
     "description": "Let's understand what you read!",
-    // "permissions": ["https://*/*", "http://*/*", "*://*/*", "activeTab"],
     "permissions": ["tabs"],
-    // "permissions": ["activeTab"],
     "background": {
       "scripts": ["background.js"],
 
