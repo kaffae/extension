@@ -1,22 +1,21 @@
+// Use backgorund instead of content scirpt.
+// Chrome API provides a way to access the current active tab in active window.
+// It's easier to check if the user has stayed on that page for a certain duration that to manage that from the individual page's loaded js script (easier to coordinate from this highup script).
 
+// COMMENT:
+// Permission with tabs in manifest.json is required for this to work. The script needs to get url of the current tab which is not returned without this permission.
 
 function checkUrlMatch(url) {
-  // COMMENT: Open all domains.
-  // const urlSupported = ['https://www.technologyreview.com', 'https://www.reuters.com', 'https://www.economist.com', 'https://www.nytimes.com', 'https://www.washingtontimes.com', 'https://www.theguardian.com', 'https://www.businessinsider.com', 'https://www.forbes.com', 'https://www.wired.com', 'https://mashable.com', 'https://www.dailymail.co.uk'];
-  // if (!urlSupported.some(supported => url.indexOf(supported) === 0)) return false;
-
   // URL check to make sure it is individual article.
   // Check for the last bit of url path. Ex) https://www.technologyreview.com/s/612276/your-genome-on-demand/
   // Conditions:
   // 1. Hyphen separated words consist of more than 3 words.
   // 2. Only for Wikipedia, allow any kind of article page since many articles can be a single title.
 
-  // console.log('checking url', url);
   const urlOnly = url.includes('?') ? url.slice(0, url.indexOf('?')) : url;
   const paths = urlOnly.split('/');
   // Check if it's domain only site.
   if (paths.length === 1) {
-    // console.log('one path');
     return false;
   }
 
@@ -24,7 +23,6 @@ function checkUrlMatch(url) {
 
   // Only skip wikipedia specific catalogue page like Category or Portal.
   if (url.indexOf('https://en.wikipedia.org/wiki') === 0) {
-    // console.log('Wikiedpai');
     if (lastPath.match(/:/)) {
       return false;
     }
@@ -33,7 +31,6 @@ function checkUrlMatch(url) {
 
   // Ex) https://www.technologyreview.com/s/612021/advanced-tech-but-growth-slow-and-unequal-paradoxes-and-policies/?set=535821
   if (lastPath.split('-').length < 3) {
-    // console.log('length too short ');
     return false;
   }
 
@@ -61,7 +58,7 @@ function saveUrl(url) {
   })
   .then(resp => resp.json())
   .then(resp => {
-    // console.log('resp', resp);
+    console.log('resp', resp);
     sending = false;
     return {};
   })
@@ -82,11 +79,17 @@ const tabUrl = {};
 // Key: tabId
 // Value: timestamp
 let activeTab = {};
-
+let count = 0;
 function processActiveTab() {
 
   // Check for time passed to make sure the user is actually reading it.
   setTimeout(() => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (heys) => {
+      console.log('heys', heys[0]);
+    });
+
+    count++;
+    chrome.browserAction.setBadgeText({text: `${count}`});
     // Cancel when new url comes into play.
     const tabId = Object.keys(activeTab)[0];
     if (!tabId) {
@@ -97,7 +100,8 @@ function processActiveTab() {
 
     // Check if enough time has passed since the active tab has been set.
     const twentySeconds = new Date();
-    twentySeconds.setSeconds(twentySeconds.getSeconds() - 20);
+    // twentySeconds.setSeconds(twentySeconds.getSeconds() - 20);
+    twentySeconds.setSeconds(twentySeconds.getSeconds() - 5);
     if (activeTab[tabId] > twentySeconds) {
       processActiveTab();
       return;
@@ -115,6 +119,7 @@ function processActiveTab() {
       return;
     }
     // console.log('saving url');
+    chrome.browserAction.setBadgeText({text: `sav`});
 
     saveUrl(tabUrl[tabId]);
 
@@ -128,61 +133,143 @@ function processActiveTab() {
   }, 5000);
 }
 
-function renewActiveTab(tabId) {
-  if (!tabId) return;
+function renewTab(url) {
 
-  // Reset all previous urls first.
-  Object.keys(activeTab).forEach(key => {
-    delete activeTab[key];
-  });
-
-  activeTab[tabId] = new Date();
-}
-
-chrome.runtime.onInstalled.addListener(function() {
-});
-
-processActiveTab();
-
-// onActivated is called every time user moves around the tab they are on.
-chrome.tabs.onActivated.addListener((activeInfo) =>  {
-  const tabId = activeInfo.tabId;
-
-
-  // Set the timestamp when the new tab has become active.
-  // Let process take care of the time management
-  renewActiveTab(tabId);
-});
-
-chrome.tabs.onRemoved.addListener(tabId => {
-  delete tabUrl[tabId];
-});
-
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  // console.log('tabs updated');
-  if (!tabId || changeInfo.status !== 'complete') return;
-  if (tab.audible) return;
-  if (!tab.url) return;
-
-
-  const url = tab.url;
-
-  // Store it so that activeTab listener can use this.
-  tabUrl[tabId] = url;
-
-  // Renew active tab if the url change happened on the same tab.
-  const activeTabId = Object.keys(activeTab)[0];
-  if (activeTabId && activeTabId === tabId) {
-    renewActiveTab(tabId);
+  if (!url) {
+    // Reset all previous urls first.
+    Object.keys(tabCount).forEach(key => {
+      delete tabCount[key];
+    });
+    return;
   }
 
-  // chrome.pageCapture.saveAsMHTML({ tabId, }, function(mhtml) {
-  //   const fileReader = new FileReader();
-  //   fileReader.readAsText(mhtml);
+  if (tabCount[url]) {
+    tabCount[url] += 1;
+    return;
+  }
 
-  //   fileReader.onload = function(e) {
-  //     const mthmlStr = e.target.result;
-      // console.log('mthmlStr', mthmlStr);
-  //   };
-  // });
+  Object.keys(tabCount).forEach(key => {
+    delete tabCount[key];
+  });
+  tabCount[url] = 1;
+}
+
+const timeInterval = 2000;
+const tabCount = {};
+setInterval(() => {
+  chrome.tabs.query({ active: true, currentWindow: true, audible: false }, tabs => {
+    if (!tabs || !tabs.length || tabs[0].status !== 'complete') {
+      renewTab(null);
+      return;
+    }
+
+    console.log('tabs.url', tabs[0].url);
+    const url = tabs[0].url;
+    // url is undefined unless extension permission is set properly.
+    if (!url || !checkUrlMatch(url)) {
+      chrome.browserAction.setBadgeText({text: ``});
+      renewTab(null);
+      return;
+    }
+
+    // Need to access window to cehck the user is actually on the page, not on other apps.
+    // Put the check inside tab query to reset url timer (window has no access to url).
+    chrome.windows.getCurrent(null, (wind) => {
+      if (!wind || !wind.focused) {
+        return;
+      }
+
+      // Check the active tab's url has changed.
+      const tabUrl = Object.keys(tabCount)[0];
+      if (!tabUrl || tabUrl !== url) {
+        console.log('tabUrl', tabUrl);
+        // TEST
+        chrome.browserAction.setBadgeText({text: ``});
+        renewTab(url);
+        return;
+      }
+
+      // Number times timeInterval is the time required for the window to be active before being saved.
+      const durationRequiredToSave = 5;
+      console.log('tabCount[tabUrl]', tabCount[tabUrl]);
+      if (tabCount[tabUrl] !== 5) {
+        // Keep counting up.
+        renewTab(url);
+        return;
+      }
+
+      chrome.browserAction.setBadgeText({text: `sav`});
+
+      saveUrl(url);
+
+      renewTab(url);
+    });
+  });
+
+}, timeInterval);
+
+// function renewActiveTab(tabId) {
+//   if (!tabId) return;
+
+//   // Reset all previous urls first.
+//   Object.keys(activeTab).forEach(key => {
+//     delete activeTab[key];
+//   });
+
+//   activeTab[tabId] = new Date();
+// }
+
+// chrome.runtime.onInstalled.addListener(function() {
+// });
+
+// processActiveTab();
+
+// // onActivated is called every time user moves around the tab they are on.
+// chrome.tabs.onActivated.addListener((activeInfo) =>  {
+//   const tabId = activeInfo.tabId;
+//   console.log('onActivated', tabId);
+//   chrome.browserAction.setBadgeText({text: `act`});
+
+
+
+//   // Set the timestamp when the new tab has become active.
+//   // Let process take care of the time management
+//   renewActiveTab(tabId);
+// });
+
+// chrome.tabs.onRemoved.addListener(tabId => {
+//   delete tabUrl[tabId];
+// });
+
+// Keep this listener so background script stays active. Chrome extension needs at least one listener.
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  // // console.log('tabs updated');
+  // if (!tabId || changeInfo.status !== 'complete') return;
+  // if (tab.audible) return;
+  // if (!tab.url) return;
+
+  // const url = tab.url;
+
+  // // Store it so that activeTab listener can use this.
+  // tabUrl[tabId] = url;
+
+  // // Renew active tab if the url change happened on the same tab.
+  // const activeTabId = Object.keys(activeTab)[0];
+  // console.log('activeTabId', activeTabId);
+  // console.log('tabUrl', tabUrl);
+  // if (activeTabId && activeTabId === tabId) {
+  //   renewActiveTab(tabId);
+  // }
+
+  // // chrome.pageCapture.saveAsMHTML({ tabId, }, function(mhtml) {
+  // //   const fileReader = new FileReader();
+  // //   fileReader.readAsText(mhtml);
+
+  // //   fileReader.onload = function(e) {
+  // //     const mthmlStr = e.target.result;
+  //     // console.log('mthmlStr', mthmlStr);
+  // //   };
+  // // });
 });
+
+

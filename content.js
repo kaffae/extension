@@ -92,6 +92,12 @@ function reload() {
 window.onhashchange = () => {
   // console.log('onhashchange', location.href);
 }
+// alert(window.location.href);
+console.log('CONTENT SCRIPT', new Date());
+console.log('CONTENT SCRIPT', window.location.href);
+setInterval(() => {
+
+}, 5000);
 
 reload();
 

@@ -2,13 +2,16 @@
     "name": "Teazuk",
     "version": "0.1.2",
     "description": "Let's understand what you read!",
-    "permissions": ["https://*/*", "http://*/*", "*://*/*"],
+    // "permissions": ["https://*/*", "http://*/*", "*://*/*", "activeTab"],
+    "permissions": ["tabs"],
+    // "permissions": ["activeTab"],
     "background": {
       "scripts": ["background.js"],
+
       "persistent": false
     },
     "content_scripts": [{
-     "matches": ["https://www.technologyreview.com/*", "https://www.reuters.com/*", "https://www.economist.com/*"],
+     "matches": ["https://*/*", "http://*/*", "*://*/*"],
      "js": ["./content.js"],
      "run_at": "document_idle"
     }],
