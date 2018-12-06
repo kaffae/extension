@@ -90,7 +90,7 @@ function renewTab(url) {
   tabCount[url] = 1;
 }
 
-const timeInterval = 5000;
+const timeInterval = 2000;
 const tabCount = {};
 setInterval(() => {
   chrome.tabs.query({ active: true, currentWindow: true, audible: false }, tabs => {
@@ -99,7 +99,6 @@ setInterval(() => {
       return;
     }
 
-    console.log('tabs.url', tabs[0].url);
     const url = tabs[0].url;
     // url is undefined unless extension permission is set properly.
     if (!url || !checkUrlMatch(url)) {
@@ -118,7 +117,6 @@ setInterval(() => {
       // Check the active tab's url has changed.
       const tabUrl = Object.keys(tabCount)[0];
       if (!tabUrl || tabUrl !== url) {
-        console.log('tabUrl', tabUrl);
         // TEST
         chrome.browserAction.setBadgeText({text: ``});
         renewTab(url);
@@ -127,7 +125,6 @@ setInterval(() => {
 
       // Number times timeInterval is the time required for the window to be active before being saved.
       const durationRequiredToSave = 5;
-      console.log('tabCount[tabUrl]', tabCount[tabUrl]);
       if (tabCount[tabUrl] !== 5) {
         // Keep counting up.
         renewTab(url);
@@ -147,5 +144,3 @@ setInterval(() => {
 // Keep this listener so background script stays active. Chrome extension needs at least one listener.
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
-
-
