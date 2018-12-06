@@ -69,70 +69,6 @@ function saveUrl(url) {
   });
 }
 
-// tabUrl holds tab id and url it represents.
-// When the tab is first activated, it has no url.
-// This holds tab id and url match. collect the url and timestamp. Then loop through to check it's opened for at least 30 seconds before the next one is opened.
-// One url is saved, remove it. Duplicate article is useless in analytics.
-const tabUrl = {};
-
-// activeTab holds the id of the currently active tab with the time it has beocme active.
-// Key: tabId
-// Value: timestamp
-let activeTab = {};
-let count = 0;
-function processActiveTab() {
-
-  // Check for time passed to make sure the user is actually reading it.
-  setTimeout(() => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (heys) => {
-      console.log('heys', heys[0]);
-    });
-
-    count++;
-    chrome.browserAction.setBadgeText({text: `${count}`});
-    // Cancel when new url comes into play.
-    const tabId = Object.keys(activeTab)[0];
-    if (!tabId) {
-      processActiveTab();
-      return;
-    }
-
-
-    // Check if enough time has passed since the active tab has been set.
-    const twentySeconds = new Date();
-    // twentySeconds.setSeconds(twentySeconds.getSeconds() - 20);
-    twentySeconds.setSeconds(twentySeconds.getSeconds() - 5);
-    if (activeTab[tabId] > twentySeconds) {
-      processActiveTab();
-      return;
-    }
-    // Check if url has not been fetched. It's been 30 seconds. If not, give up.
-    if (!tabUrl[tabId]) {
-      processActiveTab();
-      return
-    }
-
-
-    // Check the matching url only at this last step since url might not be available when the tab becomes first active.
-    if (!checkUrlMatch(tabUrl[tabId])) {
-      processActiveTab();
-      return;
-    }
-    // console.log('saving url');
-    chrome.browserAction.setBadgeText({text: `sav`});
-
-    saveUrl(tabUrl[tabId]);
-
-    // Delete active tab to stop it from keep saving.
-    delete activeTab[tabId];
-
-    // Delete tab url as well to stop saving the same url again when user comes back and forth different tabs (activeTab gets activated regardless).
-    delete tabUrl[tabId];
-
-    processActiveTab();
-  }, 5000);
-}
-
 function renewTab(url) {
 
   if (!url) {
@@ -208,68 +144,8 @@ setInterval(() => {
 
 }, timeInterval);
 
-// function renewActiveTab(tabId) {
-//   if (!tabId) return;
-
-//   // Reset all previous urls first.
-//   Object.keys(activeTab).forEach(key => {
-//     delete activeTab[key];
-//   });
-
-//   activeTab[tabId] = new Date();
-// }
-
-// chrome.runtime.onInstalled.addListener(function() {
-// });
-
-// processActiveTab();
-
-// // onActivated is called every time user moves around the tab they are on.
-// chrome.tabs.onActivated.addListener((activeInfo) =>  {
-//   const tabId = activeInfo.tabId;
-//   console.log('onActivated', tabId);
-//   chrome.browserAction.setBadgeText({text: `act`});
-
-
-
-//   // Set the timestamp when the new tab has become active.
-//   // Let process take care of the time management
-//   renewActiveTab(tabId);
-// });
-
-// chrome.tabs.onRemoved.addListener(tabId => {
-//   delete tabUrl[tabId];
-// });
-
 // Keep this listener so background script stays active. Chrome extension needs at least one listener.
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  // // console.log('tabs updated');
-  // if (!tabId || changeInfo.status !== 'complete') return;
-  // if (tab.audible) return;
-  // if (!tab.url) return;
-
-  // const url = tab.url;
-
-  // // Store it so that activeTab listener can use this.
-  // tabUrl[tabId] = url;
-
-  // // Renew active tab if the url change happened on the same tab.
-  // const activeTabId = Object.keys(activeTab)[0];
-  // console.log('activeTabId', activeTabId);
-  // console.log('tabUrl', tabUrl);
-  // if (activeTabId && activeTabId === tabId) {
-  //   renewActiveTab(tabId);
-  // }
-
-  // // chrome.pageCapture.saveAsMHTML({ tabId, }, function(mhtml) {
-  // //   const fileReader = new FileReader();
-  // //   fileReader.readAsText(mhtml);
-
-  // //   fileReader.onload = function(e) {
-  // //     const mthmlStr = e.target.result;
-  //     // console.log('mthmlStr', mthmlStr);
-  // //   };
-  // // });
 });
 
 
