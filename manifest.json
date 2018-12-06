@@ -1,8 +1,7 @@
   {
     "name": "Teazuk",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "Let's understand what you read!",
-    "permissions": ["tabs"],
     "background": {
       "scripts": ["background.js"],
 
