@@ -90,7 +90,7 @@ function renewTab(url) {
   tabCount[url] = 1;
 }
 
-const timeInterval = 2000;
+const timeInterval = 5000;
 const tabCount = {};
 setInterval(() => {
   chrome.tabs.query({ active: true, currentWindow: true, audible: false }, tabs => {
