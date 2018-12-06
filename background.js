@@ -60,6 +60,11 @@ function saveUrl(url) {
   .then(resp => {
     console.log('resp', resp);
     sending = false;
+
+    if (resp && resp.data && resp.data.status === 'success') {
+      chrome.browserAction.setBadgeText({text: `sav`});
+    }
+
     return {};
   })
   .catch(err => {
@@ -130,8 +135,6 @@ setInterval(() => {
         renewTab(url);
         return;
       }
-
-      chrome.browserAction.setBadgeText({text: `sav`});
 
       saveUrl(url);
 
