@@ -1,6 +1,6 @@
   {
     "name": "Teazuk",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "description": "Let's understand what you read!",
     "permissions": ["https://app.teazuk.com/*", "tabs"],
     "background": {
