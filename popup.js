@@ -11,7 +11,6 @@ function getUser() {
   .then(resp => resp.json())
   .then(resp => {
     const user = resp.data;
-    alert(user.id)
     if (!user.id) return null;
 
     return user;
