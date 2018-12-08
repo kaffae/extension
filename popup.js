@@ -4,7 +4,7 @@
 const token = '94eca02d-287b-40ab-82e0-04774beaf80e';
 
 function getUser() {
-  return fetch(`https://app.teazuk.com/user?token=${token}`, {
+  return fetch(`https://app.kaffae.com/user?token=${token}`, {
     credentials: 'include',
     method: 'GET',
   })
@@ -59,7 +59,7 @@ const fbLoginBtn = document.getElementById('facebook-login');
 fbLoginBtn.onclick = () => {
   // Open new window for oauth.
   const successUrl = chrome.runtime.getURL('oauth_success.html');
-  const loginWindow = window.open(`https://app.teazuk.com/auth/facebook?redirect=${successUrl}`, "facebook-login","status=1,width=600,height=700,top=100,left="+(screen.width/2-300));
+  const loginWindow = window.open(`https://app.kaffae.com/auth/facebook?redirect=${successUrl}`, "facebook-login","status=1,width=600,height=700,top=100,left="+(screen.width/2-300));
   // Attach callback to refresh the site with user state.
   loginWindow.successfulLogin = successfulLogin;
 }

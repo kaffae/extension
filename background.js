@@ -48,7 +48,7 @@ function saveUrl(url) {
   sending = true;
 
   const token = '94eca02d-287b-40ab-82e0-04774beaf80e';
-  return fetch(`https://app.teazuk.com/analytics/article?token=${token}`, {
+  return fetch(`https://app.kaffae.com/analytics/article?token=${token}`, {
     headers: {
       'Content-Type': 'application/json',
     },
