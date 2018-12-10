@@ -12,8 +12,11 @@ function checkUrlMatch(url) {
   // 1. Hyphen separated words consist of more than 3 words.
   // 2. Only for Wikipedia, allow any kind of article page since many articles can be a single title.
 
-  const urlOnly = url.includes('?') ? url.slice(0, url.indexOf('?')) : url;
+  // Remove hash (comes after query, ?), and query.
+  const noHash = url.includes('#') ? url.slice(0, url.indexOf('#')) : url;
+  const urlOnly = noHash.includes('?') ? noHash.slice(0, noHash.indexOf('?')) : noHash;
   const paths = urlOnly.split('/');
+
   // Check if it's domain only site.
   if (paths.length === 1) {
     return false;
