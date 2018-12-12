@@ -5,7 +5,6 @@
     "permissions": ["https://app.kaffae.com/*", "tabs"],
     "background": {
       "scripts": ["background.js"],
-
       "persistent": false
     },
     "browser_action": {

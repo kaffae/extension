@@ -152,8 +152,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 // Open web page for the first time.
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener(object => {
+  if (object.reason === 'install') {
     chrome.tabs.create({url: "https://kaffae.com"}, () => {
         console.log("New tab launched with https://kaffae.com");
     });
+  }
 });
