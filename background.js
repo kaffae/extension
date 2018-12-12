@@ -150,3 +150,10 @@ setInterval(() => {
 // Keep this listener so background script stays active. Chrome extension needs at least one listener.
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
+
+// Open web page for the first time.
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.tabs.create({url: "https://kaffae.com"}, () => {
+        console.log("New tab launched with https://kaffae.com");
+    });
+});
