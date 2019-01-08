@@ -61,7 +61,6 @@ function saveUrl(url) {
   })
   .then(resp => resp.json())
   .then(resp => {
-    console.log('resp', resp);
     sending = false;
 
     if (resp && resp.data && resp.data.status === 'success') {
@@ -73,7 +72,6 @@ function saveUrl(url) {
   .catch(err => {
     // Proceed to the next regardless.
     sending = false;
-    // console.log('err', err);
   });
 }
 
