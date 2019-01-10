@@ -35,6 +35,11 @@ updatePageByUserStatus();
 function updatePageByUserStatus() {
   isLoggedIn()
   .then(loggedIn => {
+    const contentBody = document.getElementsByClassName('content-body')[0];
+    if (contentBody) {
+      contentBody.style = 'display:block;';
+    }
+
     if (loggedIn) {
       document.getElementById('loggedin').style = 'display:block;';
       document.getElementById('not-loggedin').style = 'display:none;';
