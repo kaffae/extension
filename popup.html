@@ -6,17 +6,74 @@
         min-width: 250px;
         min-height: 70px;
         font-family: 'Helvetica';
+        padding: 0 10px;
       }
       h1, h2 {
         color: #555;
       }
       p {
         color: #555;
+        font-weight: 200;
+        font-size: 0.9rem;
+      }
+
+      .logo-container {
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+        margin-bottom: 2px;
+        margin-right: 3px;
+      }
+
+      .title {
+        border-bottom: 1px #ccc solid;
+        padding-bottom: 3px;
+      }
+
+      .title h1 {
+        display: inline-block;
+        font-size: 1rem;
       }
 
       .content-body {
         display: none;
+        text-align: center;
+        font-size: 1.2rem;
+        padding-bottom: 10px;
       }
+
+      .content-body p {
+        margin-top: 14px;
+        margin-bottom: 18px;
+      }
+
+      #facebook-login {
+        margin: auto;
+        cursor: pointer;
+        background-color: #4267b2;
+        border-radius: 4px;
+        color: white;
+        padding: 15px;
+        position: relative;
+        height: 12px;
+        width: 196px;
+      }
+
+      #facebook-login img {
+        height: 26px;
+        position: absolute;
+        left: 7px;
+        top: 7px;
+      }
+
+      #facebook-login .facebook-label {
+        position: absolute;
+        top: 11px;
+        left: 49px;
+        letter-spacing: 0.3px;
+        font-size: 14px;
+      }
+
     </style>
   </head>
   <body>
@@ -29,13 +86,16 @@
       <input id='code' placeholder='6 digit code' />
     </form> -->
     <!-- <button id="facebook-login" style="background-color:#4267b2;border-radius:4px;color:white"><img src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjUxMnB4IiBoZWlnaHQ9IjUxMnB4IiB2aWV3Qm94PSIwIDAgNjAuNzM0IDYwLjczMyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNjAuNzM0IDYwLjczMzsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8Zz4KCTxwYXRoIGQ9Ik01Ny4zNzgsMC4wMDFIMy4zNTJDMS41MDIsMC4wMDEsMCwxLjUsMCwzLjM1M3Y1NC4wMjZjMCwxLjg1MywxLjUwMiwzLjM1NCwzLjM1MiwzLjM1NGgyOS4wODZWMzcuMjE0aC03LjkxNHYtOS4xNjdoNy45MTQgICB2LTYuNzZjMC03Ljg0Myw0Ljc4OS0xMi4xMTYsMTEuNzg3LTEyLjExNmMzLjM1NSwwLDYuMjMyLDAuMjUxLDcuMDcxLDAuMzZ2OC4xOThsLTQuODU0LDAuMDAyYy0zLjgwNSwwLTQuNTM5LDEuODA5LTQuNTM5LDQuNDYyICAgdjUuODUxaDkuMDc4bC0xLjE4Nyw5LjE2NmgtNy44OTJ2MjMuNTJoMTUuNDc1YzEuODUyLDAsMy4zNTUtMS41MDMsMy4zNTUtMy4zNTFWMy4zNTFDNjAuNzMxLDEuNSw1OS4yMywwLjAwMSw1Ny4zNzgsMC4wMDF6IiBmaWxsPSIjMDA2REYwIi8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==" />Continue with Facebook</button> -->
-    <h2>Kaffae for Chrome</h2>
+    <header class="title">
+      <div class="logo-container"><img src="/images/icon128.png" width="32px" height="32px" /></div>
+      <h1>Kaffae for Chrome</h1>
+    </header>
     <main class="content-body">
       <div id="not-loggedin">
-        <p>Login and start understanding your reading habit.</p>
-        <div id="facebook-login" style="cursor:pointer;background-color:#4267b2;border-radius:4px;color:white;padding:15px;position:relative;height: 12px;width: 206px">
-          <img style="height:30px;position:absolute;left: 7px;top: 6px;" src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjUxMnB4IiBoZWlnaHQ9IjUxMnB4IiB2aWV3Qm94PSIwIDAgNjAuNzM0IDYwLjczMyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNjAuNzM0IDYwLjczMzsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8Zz4KCTxwYXRoIGQ9Ik01Ny4zNzgsMC4wMDFIMy4zNTJDMS41MDIsMC4wMDEsMCwxLjUsMCwzLjM1M3Y1NC4wMjZjMCwxLjg1MywxLjUwMiwzLjM1NCwzLjM1MiwzLjM1NGgyOS4wODZWMzcuMjE0aC03LjkxNHYtOS4xNjdoNy45MTQgICB2LTYuNzZjMC03Ljg0Myw0Ljc4OS0xMi4xMTYsMTEuNzg3LTEyLjExNmMzLjM1NSwwLDYuMjMyLDAuMjUxLDcuMDcxLDAuMzZ2OC4xOThsLTQuODU0LDAuMDAyYy0zLjgwNSwwLTQuNTM5LDEuODA5LTQuNTM5LDQuNDYyICAgdjUuODUxaDkuMDc4bC0xLjE4Nyw5LjE2NmgtNy44OTJ2MjMuNTJoMTUuNDc1YzEuODUyLDAsMy4zNTUtMS41MDMsMy4zNTUtMy4zNTFWMy4zNTFDNjAuNzMxLDEuNSw1OS4yMywwLjAwMSw1Ny4zNzgsMC4wMDF6IiBmaWxsPSIjRkZGRkZGIi8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==" />
-          <div style="position:absolute;top:11px;left:53px;letter-spacing:0.3px;font-size: 15px;">
+        <p>Your reading data is not tracked now.</p>
+        <div id="facebook-login">
+          <img src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjUxMnB4IiBoZWlnaHQ9IjUxMnB4IiB2aWV3Qm94PSIwIDAgNjAuNzM0IDYwLjczMyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNjAuNzM0IDYwLjczMzsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8Zz4KCTxwYXRoIGQ9Ik01Ny4zNzgsMC4wMDFIMy4zNTJDMS41MDIsMC4wMDEsMCwxLjUsMCwzLjM1M3Y1NC4wMjZjMCwxLjg1MywxLjUwMiwzLjM1NCwzLjM1MiwzLjM1NGgyOS4wODZWMzcuMjE0aC03LjkxNHYtOS4xNjdoNy45MTQgICB2LTYuNzZjMC03Ljg0Myw0Ljc4OS0xMi4xMTYsMTEuNzg3LTEyLjExNmMzLjM1NSwwLDYuMjMyLDAuMjUxLDcuMDcxLDAuMzZ2OC4xOThsLTQuODU0LDAuMDAyYy0zLjgwNSwwLTQuNTM5LDEuODA5LTQuNTM5LDQuNDYyICAgdjUuODUxaDkuMDc4bC0xLjE4Nyw5LjE2NmgtNy44OTJ2MjMuNTJoMTUuNDc1YzEuODUyLDAsMy4zNTUtMS41MDMsMy4zNTUtMy4zNTFWMy4zNTFDNjAuNzMxLDEuNSw1OS4yMywwLjAwMSw1Ny4zNzgsMC4wMDF6IiBmaWxsPSIjRkZGRkZGIi8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==" />
+          <div class="facebook-label">
             Continue with Facebook
           </div>
         </div>
