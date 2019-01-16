@@ -149,6 +149,11 @@ setInterval(() => {
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
+// Reset the badge every time tab is navigated to a different page.
+chrome.tabs.onActivated.addListener(function(activeInfo) {
+    chrome.browserAction.setBadgeText({text: ``});
+});
+
 // Open web page for the first time.
 chrome.runtime.onInstalled.addListener(object => {
   if (object.reason === 'install') {
