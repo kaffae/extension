@@ -1,6 +1,6 @@
   {
     "name": "Kaffae",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "description": "Let's visualize what you read!",
     "permissions": ["https://app.kaffae.com/*", "tabs"],
     "background": {

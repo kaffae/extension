@@ -58,6 +58,11 @@ function successfulLogin() {
   updatePageByUserStatus();
 }
 
+function successfulRegister() {
+  document.getElementById('not-loggedin').style = 'display:none;';
+  document.getElementById('registered').style = 'display:block;';
+}
+
 // For any communication with the user.
 const warningMessage = document.getElementById('warning-message');
 
@@ -174,7 +179,7 @@ joinEmailBtn.onclick = () => {
       return;
     };
 
-    successfulLogin();
+    successfulRegister();
   })
   .catch(err => {
     console.log('err', err);
