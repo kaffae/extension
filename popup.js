@@ -97,7 +97,7 @@ loginEmailBtn.onclick = () => {
     return;
   }
 
-  return fetch(`https://app.kaffae.com/users?email=${email}&password=${password}?token=${token}`, {
+  return fetch(`https://app.kaffae.com/users?email=${email}&password=${password}&token=${token}`, {
     credentials: 'include',
     method: 'GET',
   })
