@@ -19,7 +19,6 @@ function getUser() {
     console.log('err', err);
     return null;
   });
-
 }
 
 function isLoggedIn() {
@@ -59,11 +58,108 @@ function successfulLogin() {
   updatePageByUserStatus();
 }
 
+// For any communication with the user.
+const warningMessage = document.getElementById('warning-message');
+
 const fbLoginBtn = document.getElementById('facebook-login');
 fbLoginBtn.onclick = () => {
+  warningMessage.style = 'display:none;';
+
   // Open new window for oauth.
   const successUrl = chrome.runtime.getURL('oauth_success.html');
   const loginWindow = window.open(`https://app.kaffae.com/auth/facebook?redirect=${successUrl}`, "facebook-login","status=1,width=600,height=700,top=100,left="+(screen.width/2-300));
   // Attach callback to refresh the site with user state.
   loginWindow.successfulLogin = successfulLogin;
+}
+
+const signinBtn = document.getElementById('email-signin-btn');
+signinBtn.onclick = () => {
+  document.getElementById('login-email').style = 'display:block;';
+  document.getElementById('login-intro').style = 'display:none;';
+}
+
+const loginEmailBtn = document.getElementById('login-email-btn');
+loginEmailBtn.onclick = () => {
+  warningMessage.style = 'display:none;';
+
+  const email = document.getElementById('email-input').value;
+  const password = document.getElementById('password-input').value;
+  console.log('email', email);
+  if (!email || email.length < 10 || !email.includes('@')) {
+     warnUser('Email looks strange. Will you type that again?');
+    return;
+  }
+  console.log('placeholder=', password);
+  if (!password || password.length < 8) {
+    warnUser('Password must be longer than 8');
+    return;
+  }
+
+  return fetch(`https://app.kaffae.com/users?email=${email}&password=${password}?token=${token}`, {
+    credentials: 'include',
+    method: 'GET',
+  })
+  .then(resp => resp.json())
+  .then(resp => {
+    const user = resp.data;
+    if (!user.id) return null;
+
+    return user;
+  })
+  .catch(err => {
+    console.log('err', err);
+    return null;
+  });
+};
+
+// REGISTERING
+
+const goRegisterEmail = document.getElementById('go-email-register');
+goRegisterEmail.onclick = () => {
+  warningMessage.style = 'display:none;';
+
+  document.getElementById('register-email').style = 'display:block;';
+  document.getElementById('login-email').style = 'display:none;';
+};
+
+const joinEmailBtn = document.getElementById('register-email-btn');
+joinEmailBtn.onclick = () => {
+  warningMessage.style = 'display:none;';
+
+  const email = document.getElementById('email-input-register').value;
+  const password = document.getElementById('password-input-register').value;
+  if (!email || email.length < 10 || !email.includes('@')) {
+    warnUser('Email looks strange. Will you type that again?');
+    return;
+  }
+  if (!password || password.length < 8) {
+    warnUser('Password must be longer than 8');
+    return;
+  }
+
+  const data = {
+    email,
+    password,
+  };
+
+  return fetch(`https://app.kaffae.com/users?token=${token}`, {
+    credentials: 'include',
+    method: 'POST',
+  })
+  .then(resp => resp.json())
+  .then(resp => {
+    const user = resp.data;
+    if (!user.id) return null;
+
+    return user;
+  })
+  .catch(err => {
+    console.log('err', err);
+    return null;
+  });
+};
+
+function warnUser(message) {
+  warningMessage.innerHTML = message;
+  warningMessage.style = 'display:block;';
 }
