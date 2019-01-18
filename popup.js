@@ -126,8 +126,14 @@ const joinEmailBtn = document.getElementById('register-email-btn');
 joinEmailBtn.onclick = () => {
   warningMessage.style = 'display:none;';
 
+  const name = document.getElementById('name').value;
   const email = document.getElementById('email-input-register').value;
   const password = document.getElementById('password-input-register').value;
+  if (!name) {
+    warnUser('Name is required.');
+    return;
+  }
+
   if (!email || email.length < 10 || !email.includes('@')) {
     warnUser('Email looks strange. Will you type that again?');
     return;
@@ -138,13 +144,18 @@ joinEmailBtn.onclick = () => {
   }
 
   const data = {
+    name,
     email,
     password,
   };
 
   return fetch(`https://app.kaffae.com/users?token=${token}`, {
     credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
     method: 'POST',
+    body: JSON.stringify(data),
   })
   .then(resp => resp.json())
   .then(resp => {
