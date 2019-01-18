@@ -76,7 +76,7 @@
 
       #email-signin-btn, #go-email-register {
         color: #0000cc;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         margin-top: 5px;
         cursor: pointer;
       }
@@ -131,21 +131,21 @@
           </div>
           <div id="email-signin-btn">Sign in with email</div>
         </div>
+        <div id="login-email">
+          <input id="email-input" placeholder="email" />
+          <input id="password-input" placeholder="password" type="password" />
+          <button id="login-email-btn" class="submit">Login</button>
+          <div id="go-email-register">Need an account? Join Kaffae</div>
+        </div>
+        <div id="register-email">
+          <input id="name" placeholder="name" />
+          <input id="email-input-register" placeholder="email" />
+          <input id="password-input-register" placeholder="password" type="password" />
+          <button id="register-email-btn" class="submit">Join Kffae</button>
+        </div>
       </div>
       <div id="loggedin" style='display:none;'>
         <p>You are logged in. Check your read status at your <a href="https://app.kaffae.com" target="_blank">Dashboard</a></p>
-      </div>
-      <div id="login-email">
-        <input id="email-input" placeholder="email" />
-        <input id="password-input" placeholder="password" type="password" />
-        <button id="login-email-btn" class="submit">Login</button>
-        <div id="go-email-register">Need an account? Join Kaffae</div>
-      </div>
-      <div id="register-email">
-        <input id="name" placeholder="name" />
-        <input id="email-input-register" placeholder="email" />
-        <input id="password-input-register" placeholder="password" type="password" />
-        <button id="register-email-btn" class="submit">Join Kffae</button>
       </div>
       <p id="warning-message" style='display:none;'></p>
     </main>

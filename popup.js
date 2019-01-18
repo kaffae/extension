@@ -72,6 +72,8 @@ fbLoginBtn.onclick = () => {
   loginWindow.successfulLogin = successfulLogin;
 }
 
+// SIGN IN
+
 const signinBtn = document.getElementById('email-signin-btn');
 signinBtn.onclick = () => {
   document.getElementById('login-email').style = 'display:block;';
@@ -84,12 +86,12 @@ loginEmailBtn.onclick = () => {
 
   const email = document.getElementById('email-input').value;
   const password = document.getElementById('password-input').value;
-  console.log('email', email);
+
   if (!email || email.length < 10 || !email.includes('@')) {
      warnUser('Email looks strange. Will you type that again?');
     return;
   }
-  console.log('placeholder=', password);
+
   if (!password || password.length < 8) {
     warnUser('Password must be longer than 8');
     return;
@@ -102,12 +104,18 @@ loginEmailBtn.onclick = () => {
   .then(resp => resp.json())
   .then(resp => {
     const user = resp.data;
-    if (!user.id) return null;
+    if (!user.id) {
+      const errorSignup = 'Something went wrong. Please contact masa@kaffae.com';
+      warnUser(errorSignup);
+      return;
+    }
 
-    return user;
+    successfulLogin();
   })
   .catch(err => {
     console.log('err', err);
+    const errorSignup = 'Could not find the user with the email and password';
+    warnUser(errorSignup);
     return null;
   });
 };
@@ -160,12 +168,18 @@ joinEmailBtn.onclick = () => {
   .then(resp => resp.json())
   .then(resp => {
     const user = resp.data;
-    if (!user.id) return null;
+    if (!user.id) {
+      const errorSignup = 'Something went wrong. Please contact masa@kaffae.com';
+      warnUser(errorSignup);
+      return;
+    };
 
-    return user;
+    successfulLogin();
   })
   .catch(err => {
     console.log('err', err);
+    const errorSignup = 'Something went wrong. Please contact masa@kaffae.com';
+    warnUser(errorSignup);
     return null;
   });
 };
