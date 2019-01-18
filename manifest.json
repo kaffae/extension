@@ -1,7 +1,7 @@
   {
     "name": "Read With Kaffae",
     "short_name": "Kaffae",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "description": "Let's visualize what you read!",
     "permissions": ["https://app.kaffae.com/*", "tabs"],
     "background": {
