@@ -3,6 +3,8 @@
 
 const token = '94eca02d-287b-40ab-82e0-04774beaf80e';
 
+let sending = false;
+
 function getUser() {
   return fetch(`https://app.kaffae.com/user?token=${token}`, {
     credentials: 'include',
@@ -166,6 +168,9 @@ joinEmailBtn.onclick = () => {
     password,
   };
 
+  if (sending) return;
+  sending = true;
+
   return fetch(`https://app.kaffae.com/users?token=${token}`, {
     credentials: 'include',
     headers: {
@@ -176,6 +181,9 @@ joinEmailBtn.onclick = () => {
   })
   .then(resp => resp.json())
   .then(resp => {
+
+    sending = false;
+
     if (resp.data.status === 'EMAIL_EXISTS') {
       const errorSignup = 'That email exists already. Try signing in.';
       warnUser(errorSignup);
@@ -191,6 +199,8 @@ joinEmailBtn.onclick = () => {
     successfulRegister();
   })
   .catch(err => {
+    sending = false;
+
     console.log('err', err);
     const errorSignup = 'Something went wrong. Please contact masa@kaffae.com';
     warnUser(errorSignup);
