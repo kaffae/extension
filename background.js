@@ -5,6 +5,10 @@
 // COMMENT:
 // Permission with tabs in manifest.json is required for this to work. The script needs to get url of the current tab which is not returned without this permission.
 
+const token = '94eca02d-287b-40ab-82e0-04774beaf80e';
+
+let isUserLoggedin = false;
+
 function checkUrlMatch(url) {
   // URL check to make sure it is individual article.
   // Check for the last bit of url path. Ex) https://www.technologyreview.com/s/612276/your-genome-on-demand/
@@ -50,7 +54,7 @@ function saveUrl(url) {
 
   sending = true;
 
-  const token = '94eca02d-287b-40ab-82e0-04774beaf80e';
+
   return fetch(`https://app.kaffae.com/analytics/article?token=${token}`, {
     headers: {
       'Content-Type': 'application/json',
@@ -64,6 +68,7 @@ function saveUrl(url) {
     sending = false;
 
     if (resp && resp.data && resp.data.status === 'success') {
+      chrome.browserAction.setBadgeBackgroundColor({ color: 'rgba(0,0,0,0)' });
       chrome.browserAction.setBadgeText({text: `sav`});
     }
 
@@ -96,9 +101,12 @@ function renewTab(url) {
   tabCount[url] = 1;
 }
 
+// Check reading every 5 seconds.
 const timeInterval = 5000;
 const tabCount = {};
 setInterval(() => {
+  if (!isUserLoggedin) return;
+
   chrome.tabs.query({ active: true, currentWindow: true, audible: false }, tabs => {
     if (!tabs || !tabs.length || tabs[0].status !== 'complete') {
       renewTab(null);
@@ -123,7 +131,6 @@ setInterval(() => {
       // Check the active tab's url has changed.
       const tabUrl = Object.keys(tabCount)[0];
       if (!tabUrl || tabUrl !== url) {
-        // TEST
         chrome.browserAction.setBadgeText({text: ``});
         renewTab(url);
         return;
@@ -145,13 +152,72 @@ setInterval(() => {
 
 }, timeInterval);
 
+
+function getUser() {
+  return fetch(`https://app.kaffae.com/user?token=${token}`, {
+    credentials: 'include',
+    method: 'GET',
+  })
+  .then(resp => resp.json())
+  .then(resp => {
+    const user = resp.data;
+    if (!user.id) return null;
+
+    return user;
+  })
+  .catch(err => {
+    console.log('err', err);
+    return null;
+  });
+}
+
+function isLoggedIn() {
+  return getUser()
+  .then(user => {
+    if (!user) return false;
+
+    return true;
+  });
+}
+
+function notifyUserToLogin() {
+  return isLoggedIn()
+  .then(loggedIn => {
+    if (!loggedIn) {
+      // Display warning badge.
+      chrome.browserAction.setBadgeBackgroundColor({ color: '#F00' });
+      chrome.browserAction.setBadgeText({ text: '!' });
+
+      isUserLoggedin = false;
+      return;
+    }
+    isUserLoggedin = true;
+
+    chrome.browserAction.setBadgeBackgroundColor({ color: 'rgba(0,0,0,0)' });
+    chrome.browserAction.setBadgeText({ text: '' });
+
+  })
+  .catch(err => {
+    console.log('Error checking user login status');
+  });
+}
+notifyUserToLogin();
+
+// Check user status every 10 minutes.
+const userCheckInterval = 10 * 60 * 1000;
+setInterval(() => {
+  notifyUserToLogin();
+}, userCheckInterval);
+
 // Keep this listener so background script stays active. Chrome extension needs at least one listener.
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 // Reset the badge every time tab is navigated to a different page.
 chrome.tabs.onActivated.addListener(function(activeInfo) {
-    chrome.browserAction.setBadgeText({text: ``});
+  if (!isUserLoggedin) return;
+
+  chrome.browserAction.setBadgeText({text: ``});
 });
 
 // Open web page for the first time.
@@ -160,5 +226,7 @@ chrome.runtime.onInstalled.addListener(object => {
     chrome.tabs.create({url: "https://kaffae.com"}, () => {
         console.log("New tab launched with https://kaffae.com");
     });
+
+    return notifyUserToLogin();
   }
 });

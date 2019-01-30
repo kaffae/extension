@@ -55,6 +55,10 @@ function updatePageByUserStatus() {
 }
 
 function successfulLogin() {
+  // For the first time, user is not logged in.
+  chrome.browserAction.setBadgeBackgroundColor({ color: 'rgba(0,0,0,0)' });
+  chrome.browserAction.setBadgeText({ text: '' });
+
   updatePageByUserStatus();
 }
 
