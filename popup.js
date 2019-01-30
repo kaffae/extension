@@ -176,8 +176,13 @@ joinEmailBtn.onclick = () => {
   })
   .then(resp => resp.json())
   .then(resp => {
-    const user = resp.data;
-    if (!user.id) {
+    if (resp.data.status === 'EMAIL_EXISTS') {
+      const errorSignup = 'That email exists already. Try signing in.';
+      warnUser(errorSignup);
+      return;
+    }
+
+    if (!resp.data.id) {
       const errorSignup = 'Something went wrong. Please contact masa@kaffae.com';
       warnUser(errorSignup);
       return;
