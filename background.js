@@ -152,7 +152,6 @@ setInterval(() => {
 
 }, timeInterval);
 
-
 function getUser() {
   return fetch(`https://app.kaffae.com/user?token=${token}`, {
     credentials: 'include',
