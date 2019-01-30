@@ -222,9 +222,10 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 // Open web page for the first time.
 chrome.runtime.onInstalled.addListener(object => {
   if (object.reason === 'install') {
-    chrome.tabs.create({url: "https://kaffae.com"}, () => {
-        console.log("New tab launched with https://kaffae.com");
-    });
+    // COMMENT: No popup without proper landing page. The site asks the user to install the extension agian and it's not helpful.
+    // chrome.tabs.create({url: "https://kaffae.com"}, () => {
+    //     console.log("New tab launched with https://kaffae.com");
+    // });
 
     return notifyUserToLogin();
   }
