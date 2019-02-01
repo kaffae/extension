@@ -44,6 +44,10 @@ function updatePageByUserStatus() {
     if (loggedIn) {
       document.getElementById('loggedin').style = 'display:block;';
       document.getElementById('not-loggedin').style = 'display:none;';
+
+      // For safety.
+      chrome.browserAction.setBadgeBackgroundColor({ color: 'rgba(0,0,0,0)' });
+      chrome.browserAction.setBadgeText({ text: '' });
     } else {
       document.getElementById('loggedin').style = 'display:none;';
       document.getElementById('not-loggedin').style = 'display:block;';
@@ -57,10 +61,6 @@ function updatePageByUserStatus() {
 }
 
 function successfulLogin() {
-  // For the first time, user is not logged in.
-  chrome.browserAction.setBadgeBackgroundColor({ color: 'rgba(0,0,0,0)' });
-  chrome.browserAction.setBadgeText({ text: '' });
-
   updatePageByUserStatus();
 }
 
@@ -194,7 +194,7 @@ joinEmailBtn.onclick = () => {
       const errorSignup = 'Something went wrong. Please contact masa@kaffae.com';
       warnUser(errorSignup);
       return;
-    };
+    }
 
     successfulRegister();
   })
