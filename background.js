@@ -55,7 +55,6 @@ function saveUrl(url) {
 
   sending = true;
 
-
   return fetch(`https://app.kaffae.com/analytics/article?token=${token}`, {
     headers: {
       'Content-Type': 'application/json',

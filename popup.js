@@ -161,11 +161,13 @@ joinEmailBtn.onclick = () => {
     warnUser('Password must be longer than 8');
     return;
   }
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const data = {
     name,
     email,
     password,
+    timezone,
   };
 
   if (sending) return;
