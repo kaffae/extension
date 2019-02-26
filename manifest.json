@@ -1,7 +1,7 @@
   {
     "name": "Read With Kaffae",
     "short_name": "Kaffae",
-    "version": "0.2.10",
+    "version": "0.2.11",
     "description": "Read smarter by understanding how you read!",
     "permissions": ["https://app.kaffae.com/*", "tabs", "http://*/*", "https://*/*"],
     "background": {
