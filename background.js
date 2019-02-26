@@ -86,6 +86,37 @@ function saveUrl(url) {
   });
 }
 
+let sending2 = false;
+function saveActive(url) {
+  const data = {
+    url,
+  };
+
+  if (sending2) return;
+  sending2 = true;
+
+  return fetch(`https://app.kaffae.com/analytics/article/active?token=${token}`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    method: 'PUT',
+    body: JSON.stringify(data),
+  })
+  .then(resp => resp.json())
+  .then(resp => {
+    sending2 = false;
+
+    return {};
+  })
+  .catch(err => {
+    // Proceed to the next regardless without handling the error in the frontend.
+    sending2 = false;
+
+    return {};
+  });
+}
+
 // tabCount checks how long the current url is being active for.
 const tabCount = {};
 
@@ -109,6 +140,29 @@ function renewTab(url) {
     delete tabCount[key];
   });
   tabCount[url] = 1;
+  lastScrollPostion = -1;
+}
+
+// lastScrollPostion is used to check for the user's page activity.
+let lastScrollPostion = -1;
+
+function getPageOffset(tabId, cb) {
+  if (!tabId) return -1;
+  if (!cb) return -1;
+
+  // Execute script returns whatever expression is evaluated. There is no need to return explicitly.
+  // Also, this window object must be referenced on the website's window. You can still reference window from background script, but that would be the encapsulated separate version.
+  chrome.tabs.executeScript(tabId, {
+    code:  `window.pageYOffset`,
+  },
+  (pageOffset) => {
+    if (!pageOffset || !Array.isArray(pageOffset) || pageOffset.length < 1) {
+      cb(-1);
+      return;
+    }
+
+    cb(pageOffset[0]);
+  });
 }
 
 // Check the status of user window every 5 seconds to determine if the reading is happening.
@@ -122,6 +176,7 @@ setInterval(() => {
       return;
     }
 
+    const tabId = tabs[0].id;
     const url = tabs[0].url;
     // url is undefined unless extension permission is set properly.
     if (!url || !checkUrlMatch(url)) {
@@ -146,15 +201,42 @@ setInterval(() => {
       }
 
       // durationRequiredToSave is the number requirement for the window to be active before prompting to save.
-      const durationRequiredToSave = 5;
-      if (tabCount[tabUrl] !== 5) {
+      const durationRequiredToSave = 4;
+      if (tabCount[tabUrl] < durationRequiredToSave) {
         // Keep counting up.
         renewTab(url);
         return;
       }
 
-      saveUrl(url);
+      if (tabCount[tabUrl] === durationRequiredToSave) {
+        // Only save url when the page has been moved at least once.
+        // For simplicity, check the position 0 at the point of save. It will save anytime the user moves in the next time interval.
+        // If 0, it will stop the counting process altogether and the process will be stuck here unless scrolling happens or the tab (url) changes.
+        getPageOffset(tabId, pageOffset => {
+          if (pageOffset === 0) return;
 
+          lastScrollPostion = pageOffset;
+
+          saveUrl(url);
+          renewTab(url);
+        });
+
+        return;
+      }
+
+      getPageOffset(tabId, pageOffset => {
+        // 1. Check if the offset is the same value as last.
+        // 2. Save active state if position is different from the previous.
+        if (lastScrollPostion === pageOffset) return;
+
+        // Save
+        saveActive(url);
+
+        // Update the last positoin
+        lastScrollPostion = pageOffset;
+      });
+
+      // Even after url has been saved, count up.
       renewTab(url);
     });
   });

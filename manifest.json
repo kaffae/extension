@@ -3,7 +3,7 @@
     "short_name": "Kaffae",
     "version": "0.2.10",
     "description": "Read smarter by understanding how you read!",
-    "permissions": ["https://app.kaffae.com/*", "tabs"],
+    "permissions": ["https://app.kaffae.com/*", "tabs", "http://*/*", "https://*/*"],
     "background": {
       "scripts": ["background.js"],
       "persistent": false
