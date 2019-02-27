@@ -156,6 +156,9 @@ function getPageOffset(tabId, cb) {
     code:  `window.pageYOffset`,
   },
   (pageOffset) => {
+    // Catch run time error before it bubbles up to the extension. A common case for the error is "Unchecked runtime.lastError: The tab was closed."
+    if(chrome.runtime.lastError) return;
+
     if (!pageOffset || !Array.isArray(pageOffset) || pageOffset.length < 1) {
       cb(-1);
       return;
