@@ -9,6 +9,14 @@ const token = '94eca02d-287b-40ab-82e0-04774beaf80e';
 
 let isUserLoggedin = false;
 
+function cleanUrl(url) {
+  if (!url || typeof url !== 'string') return null;
+
+  const noHash = url.includes('#') ? url.slice(0, url.indexOf('#')) : url;
+  const mainUrl = noHash.includes('?') ? noHash.slice(0, noHash.indexOf('?')) : noHash;
+  return mainUrl;
+}
+
 function checkUrlMatch(url) {
   // URL check to make sure it is individual article.
   // Check for the last bit of url path. Ex) https://www.technologyreview.com/s/612276/your-genome-on-demand/
@@ -17,9 +25,8 @@ function checkUrlMatch(url) {
   // 2. Only for Wikipedia, allow any kind of article page since many articles can be a single title.
 
   // Remove hash (comes after query, ?), and query.
-  const noHash = url.includes('#') ? url.slice(0, url.indexOf('#')) : url;
-  const urlOnly = noHash.includes('?') ? noHash.slice(0, noHash.indexOf('?')) : noHash;
-  const paths = urlOnly.split('/');
+  const mainUrl = cleanUrl(url);
+  const paths = mainUrl.split('/');
 
   // Check if it's domain only site.
   if (paths.length === 1) {
@@ -180,7 +187,7 @@ setInterval(() => {
     }
 
     const tabId = tabs[0].id;
-    const url = tabs[0].url;
+    const url = cleanUrl(tabs[0].url);
     // url is undefined unless extension permission is set properly.
     if (!url || !checkUrlMatch(url)) {
       chrome.browserAction.setBadgeText({text: ``});
