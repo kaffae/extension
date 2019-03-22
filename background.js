@@ -320,6 +320,10 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 chrome.runtime.onInstalled.addListener(object => {
   if (object.reason === 'install') {
 
+    chrome.tabs.create({url: "https://kaffae.com/install_success.html"});
+
     return notifyUserToLogin();
   }
 });
+
+chrome.runtime.setUninstallURL('https://kaffae.com/uninstall_success.html');
