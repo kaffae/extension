@@ -78,7 +78,8 @@ fbLoginBtn.onclick = () => {
 
   // Open new window for oauth.
   const successUrl = chrome.runtime.getURL('oauth_success.html');
-  const loginWindow = window.open(`https://app.kaffae.com/auth/facebook?redirect=${successUrl}`, "facebook-login","status=1,width=600,height=700,top=100,left="+(screen.width/2-300));
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const loginWindow = window.open(`https://app.kaffae.com/auth/facebook?redirect=${successUrl}&timezone=${timezone}`, "facebook-login","status=1,width=600,height=700,top=100,left="+(screen.width/2-300));
   // Attach callback to refresh the site with user state.
   loginWindow.successfulLogin = successfulLogin;
 }
