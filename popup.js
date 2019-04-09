@@ -109,9 +109,14 @@ loginEmailBtn.onclick = () => {
     return;
   }
 
-  return fetch(`https://app.kaffae.com/users?email=${email}&password=${password}&token=${token}`, {
+  const auth = btoa(`${email}:${password}`);
+  return fetch(`https://app.kaffae.com/users?token=${token}`, {
+    headers: {
+      'Authorization': `Basic ${auth}`,
+    },
     credentials: 'include',
     method: 'GET',
+
   })
   .then(resp => resp.json())
   .then(resp => {
