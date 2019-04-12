@@ -245,7 +245,7 @@ setInterval(() => {
       }
 
       // durationRequiredToSave is the number requirement for the window to be active before prompting to save.
-      const durationRequiredToSave = 3;
+      const durationRequiredToSave = 2;
       if (tabCount[tabUrl] < durationRequiredToSave) {
         // Keep counting up.
         renewTab(url);
