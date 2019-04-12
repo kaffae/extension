@@ -17,6 +17,29 @@ function cleanUrl(url) {
   return mainUrl;
 }
 
+function checkForForum(url) {
+  // Remove blacklisted urls.
+  const forumTags = ['forums', 'forum', 'thread', 'threads', 'questions'];
+  const slugs = url.slice(url.indexOf('://') + 3).split('/').filter((s, i) => i !== 0 && s.length);
+
+  if (slugs.some(slug => forumTags.includes(slug.toLowerCase()))) {
+    return true;
+  }
+
+  // COMMENT: Hack. Extracting subdomain was hard to do it properly. There are too many top level domain with multiple dots. Ex) https://google.co.uk
+  // Just remove forum subdomain for now.
+  if (url.indexOf('https://forum.') === 0 || url.indexOf('https://thread.') === 0) {
+    return true;
+  }
+
+  // Final hack.
+  const blacklist = ['https://www.quora.com', 'https://www.goodreads.com'];
+  if (blacklist.some(b => url.indexOf(b) === 0)) {
+    return true;
+  }
+  return false;
+}
+
 function checkUrlMatch(url) {
   // URL check to make sure it is individual article.
   // Check for the last bit of url path. Ex) https://www.technologyreview.com/s/612276/your-genome-on-demand/
@@ -46,6 +69,11 @@ function checkUrlMatch(url) {
 
   // Ex url) https://www.technologyreview.com/s/612021/advanced-tech-but-growth-slow-and-unequal-paradoxes-and-policies
   if (lastPath.split('-').length < 3) {
+    return false;
+  }
+
+  // Check against forum. Ignore htem.
+  if (checkForForum(mainUrl)) {
     return false;
   }
 
