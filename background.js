@@ -49,6 +49,12 @@ function checkUrlMatch(url) {
 
   // Remove hash (comes after query, ?), and query.
   const mainUrl = cleanUrl(url);
+
+  // Only store http request.
+  if (mainUrl.indexOf('http') !== 0 || mainUrl.indexOf('.') === -1 || mainUrl.indexOf('://') === -1) {
+    return false;
+  }
+
   const paths = mainUrl.split('/');
 
   // Check if it's domain only site.
